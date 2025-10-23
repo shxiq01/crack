@@ -1,4 +1,5 @@
 import base64
+import pathlib
 
 from crypto_plus import CryptoPlus
 
@@ -85,7 +86,13 @@ class DBeaverKeyGen(KeyGen):
         return self.crypto_plus.decrypt_by_public_key(base64.b64decode(licenses))
 
     def patch(self):
-        with open("dbeaver-ue-public.key", "r") as f:
+        module_dir = pathlib.Path(__file__).parent
+        key_file = module_dir / "dbeaver-ue-public.key"
+
+        if not key_file.is_file():
+            raise FileNotFoundError(f"dbeaver-ue-public.key not found at {key_file}")
+
+        with open(key_file, "r") as f:
             old_n = CryptoPlus.loads("".join(f.readlines()[1:])).public_key.n
         return power_args_template.format(
             old_n=old_n, new_n=self.crypto_plus.public_key.n

@@ -70,6 +70,16 @@ Issues = "https://github.com/example/crack/issues"
 
 [project.scripts]
 crack = "crack.cli:main"
+jetbrains = "crack.jetbrains_cli:main"
+jetbrains-server = "crack.jetbrains_cli:server"
+jetbrains-plugins = "crack.jetbrains_cli:update_plugins"
+dbeaver = "crack.dbeaver_cli:main"
+typora = "crack.typora_cli:main"
+xmind = "crack.xmind_cli:main"
+gitlab = "crack.gitlab_cli:main"
+atlassian = "crack.atlassian_cli:main"
+finalshell = "crack.finalshell_cli:main"
+surely = "crack.surely_cli:main"
 
 [tool.black]
 line-length = 88

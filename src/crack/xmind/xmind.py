@@ -11,14 +11,19 @@ from crack.base import KeyGen
 
 class XmindKeyGen(KeyGen):
     def __init__(self):
-        if os.path.isfile("key.pem"):
-            rsa = CryptoPlus.load("key.pem")
+        # Get the module directory for storing keys
+        module_dir = pathlib.Path(__file__).parent
+        key_path = module_dir / "key.pem"
+        old_key_path = module_dir / "old.pem"
+
+        if key_path.is_file():
+            rsa = CryptoPlus.load(str(key_path))
         else:
             rsa = CryptoPlus.generate_rsa(1024)
-            rsa.dump("key.pem", "new_public_key.pem")
+            rsa.dump(str(key_path), str(module_dir / "new_public_key.pem"))
         self.crypto_plus = rsa
 
-        tmp_path = os.environ["TMP"]
+        tmp_path = os.environ.get("TMP", os.path.expanduser("~"))
         asar_path = pathlib.Path(tmp_path).parent.joinpath(r"Programs\Xmind\resources")
         self.asar_file = asar_path.joinpath("app.asar")
         self.asar_file_bak = asar_path.joinpath("app.asar.bak")
@@ -26,7 +31,11 @@ class XmindKeyGen(KeyGen):
         self.main_dir = self.crack_asar_dir.joinpath("main")
         self.renderer_dir = self.crack_asar_dir.joinpath("renderer")
         self.license_data = None
-        self.old_public_key = open("old.pem").read()
+
+        if old_key_path.is_file():
+            self.old_public_key = old_key_path.read_text()
+        else:
+            raise FileNotFoundError(f"old.pem not found at {old_key_path}")
 
     def generate(self):
         license_info = '{"status": "sub", "expireTime": 4093057076000, "ss": "", "deviceId": "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"}'

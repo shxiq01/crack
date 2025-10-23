@@ -1,4 +1,5 @@
 import base64
+import os
 import pathlib
 from Crypto.Cipher import AES
 
@@ -12,7 +13,16 @@ aes_key = bytes.fromhex(
 
 class TyporaKeyGen(KeyGen):
     def __init__(self):
-        asar_path = pathlib.Path(r"D:\Program Files\Typora\resources")
+        # Try to find Typora installation path
+        typora_path = os.environ.get("TYPORA_PATH")
+        if not typora_path:
+            # Default paths for different OS
+            if os.name == 'nt':  # Windows
+                typora_path = r"C:\Program Files\Typora\resources"
+            else:  # macOS/Linux
+                typora_path = os.path.expanduser("~/Applications/Typora.app/Contents/Resources")
+
+        asar_path = pathlib.Path(typora_path)
         self.asar_file = asar_path.joinpath("app.asar")
         self.asar_file_bak = asar_path.joinpath("app.asar.bak")
         self.crack_asar_dir = asar_path.joinpath("ext")

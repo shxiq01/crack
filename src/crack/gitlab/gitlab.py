@@ -1,6 +1,7 @@
 import base64
 import json
 import os
+import pathlib
 
 from Crypto.Cipher import AES
 from crypto_plus import CryptoPlus
@@ -52,8 +53,13 @@ class GitlabKeyGen(KeyGen):
         }
         encrypt_license = json.dumps(encrypt_license).encode()
         encrypt_license = base64.b64encode(encrypt_license)
-        with open("GitLabEE.gitlab-license", "wb") as f:
+
+        # Write to module directory instead of current directory
+        module_dir = pathlib.Path(__file__).parent
+        license_file = module_dir / "GitLabEE.gitlab-license"
+        with open(license_file, "wb") as f:
             f.write(encrypt_license)
+
         return encrypt_license.decode()
 
     def parse(self, licenses):
